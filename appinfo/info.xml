@@ -1,11 +1,11 @@
-<?xml version="1.0"?>
+<?xml version="2.0"?>
 <info xmlns:xsi= "http://www.w3.org/2001/XMLSchema-instance"
 	  xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
 	<id>medionlibrarys</id>
 	<name>Medionlibrarys</name>
 	<summary>A Medionlibrary manager for Nextcloud and ownCloud</summary>
 	<description><![CDATA[Medionlibrary manager for Nextcloud and ownCloud]]></description>
-	<version>0.0.2</version>
+	<version>0.1.2</version>
 	<licence>agpl</licence>
 	<author mail="blizzz@arthur-schiwon.de" homepage="https://www.arthur-schiwon.de">Arthur Schiwon</author>
 	<author>Marvin Thomas Rabe</author>
