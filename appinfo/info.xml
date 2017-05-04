@@ -5,7 +5,7 @@
 	<name>Medionlibrarys</name>
 	<summary>A Medionlibrary manager for Nextcloud and ownCloud</summary>
 	<description><![CDATA[Medionlibrary manager for Nextcloud and ownCloud]]></description>
-	<version>0.0.1</version>
+	<version>0.0.2</version>
 	<licence>agpl</licence>
 	<author mail="blizzz@arthur-schiwon.de" homepage="https://www.arthur-schiwon.de">Arthur Schiwon</author>
 	<author>Marvin Thomas Rabe</author>
