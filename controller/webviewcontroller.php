@@ -8,13 +8,13 @@
  * @copyright Stefan Klemm 2014
  */
 
-namespace OCA\Bookmarks\Controller;
+namespace OCA\Medionlibrarys\Controller;
 
 use OCP\AppFramework\Http\ContentSecurityPolicy;
 use \OCP\IRequest;
 use \OCP\AppFramework\Http\TemplateResponse;
 use \OCP\AppFramework\Controller;
-use \OCA\Bookmarks\Controller\Lib\Bookmarks;
+use \OCA\Medionlibrarys\Controller\Lib\Medionlibrarys;
 use OCP\IURLGenerator;
 
 class WebViewController extends Controller {
@@ -25,8 +25,8 @@ class WebViewController extends Controller {
 	/** @var IURLGenerator  */
 	private $urlgenerator;
 
-	/** @var Bookmarks */
-	private $bookmarks;
+	/** @var Medionlibrarys */
+	private $medionlibrarys;
 
 	/**
 	 * WebViewController constructor.
@@ -35,13 +35,13 @@ class WebViewController extends Controller {
 	 * @param IRequest $request
 	 * @param $userId
 	 * @param IURLGenerator $urlgenerator
-	 * @param Bookmarks $bookmarks
+	 * @param Medionlibrarys $medionlibrarys
 	 */
-	public function __construct($appName, IRequest $request, $userId, IURLGenerator $urlgenerator, Bookmarks $bookmarks) {
+	public function __construct($appName, IRequest $request, $userId, IURLGenerator $urlgenerator, Medionlibrarys $medionlibrarys) {
 		parent::__construct($appName, $request);
 		$this->userId = $userId;
 		$this->urlgenerator = $urlgenerator;
-		$this->bookmarks = $bookmarks;
+		$this->medionlibrarys = $medionlibrarys;
 	}
 
 	/**
@@ -49,13 +49,13 @@ class WebViewController extends Controller {
 	 * @NoCSRFRequired
 	 */
 	public function index() {
-		$bookmarkleturl = $this->urlgenerator->getAbsoluteURL('index.php/apps/bookmarks/bookmarklet');
-		$params = array('user' => $this->userId, 'bookmarkleturl' => $bookmarkleturl);
+		$medionlibraryleturl = $this->urlgenerator->getAbsoluteURL('index.php/apps/medionlibrarys/medionlibrarylet');
+		$params = array('user' => $this->userId, 'medionlibraryleturl' => $medionlibraryleturl);
 
 		$policy = new ContentSecurityPolicy();
 		$policy->addAllowedFrameDomain("'self'");
 
-		$response = new TemplateResponse('bookmarks', 'main', $params);
+		$response = new TemplateResponse('medionlibrarys', 'main', $params);
 		$response->setContentSecurityPolicy($policy);
 		return $response;
 	}
@@ -68,23 +68,23 @@ class WebViewController extends Controller {
 	 * @NoAdminRequired
 	 * @NoCSRFRequired
 	 */
-	public function bookmarklet($url = "", $title = "") {
-		$bookmarkExists = $this->bookmarks->bookmarkExists($url, $this->userId);
+	public function medionlibrarylet($url = "", $title = "") {
+		$medionlibraryExists = $this->medionlibrarys->medionlibraryExists($url, $this->userId);
 		$description = "";
         $tags = [];
-		if ($bookmarkExists !== false){
-			$bookmark = $this->bookmarks->findUniqueBookmark($bookmarkExists, $this->userId);
-			$description = $bookmark['description'];
-            $tags = $bookmark['tags'];
+		if ($medionlibraryExists !== false){
+			$medionlibrary = $this->medionlibrarys->findUniqueMedionlibrary($medionlibraryExists, $this->userId);
+			$description = $medionlibrary['description'];
+            $tags = $medionlibrary['tags'];
 		}
 		$params = array(
             'url'           => $url,
             'title'         => $title,
             'description'   => $description,
-            'bookmarkExists'=> $bookmarkExists,
+            'medionlibraryExists'=> $medionlibraryExists,
             'tags'          => $tags
         );
-		return new TemplateResponse('bookmarks', 'addBookmarklet', $params);  // templates/main.php
+		return new TemplateResponse('medionlibrarys', 'addMedionlibrarylet', $params);  // templates/main.php
 	}
 
 }

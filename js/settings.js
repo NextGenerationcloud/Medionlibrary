@@ -16,7 +16,7 @@ function fileUpload(form, resultDiv) {
 		} catch (e) {
 		}
 		if (!data) {
-			resultDiv.text(t('bookmark', 'Import error'));
+			resultDiv.text(t('medionlibrary', 'Import error'));
 			return;
 		}
 		if (data.status == 'error') {
@@ -27,8 +27,8 @@ function fileUpload(form, resultDiv) {
 			});
 			resultDiv.html(list);
 		} else {
-			resultDiv.text(t('bookmark', 'Import completed successfully.'));
-			getBookmarks();
+			resultDiv.text(t('medionlibrary', 'Import completed successfully.'));
+			getMedionlibrarys();
 		}
 	};
 
@@ -59,5 +59,5 @@ function fileUpload(form, resultDiv) {
 	// Submit the form...
 	form.submit();
 
-	resultDiv.text(t('bookmark', 'Uploading...'));
+	resultDiv.text(t('medionlibrary', 'Uploading...'));
 }

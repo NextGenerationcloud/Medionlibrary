@@ -8,7 +8,7 @@
  * @copyright Stefan Klemm 2014
  */
 
-namespace OCA\Bookmarks\Controller\Rest;
+namespace OCA\Medionlibrarys\Controller\Rest;
 
 use OCP\IDBConnection;
 use OCP\IL10N;
@@ -16,27 +16,27 @@ use \OCP\IRequest;
 use \OCP\AppFramework\ApiController;
 use \OCP\AppFramework\Http\JSONResponse;
 use \OCP\AppFramework\Http;
-use \OCA\Bookmarks\Controller\Lib\Bookmarks;
-use \OCA\Bookmarks\Controller\Lib\ExportResponse;
-use \OCA\Bookmarks\Controller\Lib\Helper;
+use \OCA\Medionlibrarys\Controller\Lib\Medionlibrarys;
+use \OCA\Medionlibrarys\Controller\Lib\ExportResponse;
+use \OCA\Medionlibrarys\Controller\Lib\Helper;
 use OCP\Util;
 
-class BookmarkController extends ApiController {
+class MedionlibraryController extends ApiController {
 
 	private $userId;
 	private $db;
 	private $l10n;
 
-	/** @var Bookmarks */
-	private $bookmarks;
+	/** @var Medionlibrarys */
+	private $medionlibrarys;
 
-	public function __construct($appName, IRequest $request, $userId, IDBConnection $db, IL10N $l10n, Bookmarks $bookmarks) {
+	public function __construct($appName, IRequest $request, $userId, IDBConnection $db, IL10N $l10n, Medionlibrarys $medionlibrarys) {
 		parent::__construct($appName, $request);
 		$this->userId = $userId;
 		$this->db = $db;
 		$this->request = $request;
 		$this->l10n = $l10n;
-		$this->bookmarks = $bookmarks;
+		$this->medionlibrarys = $medionlibrarys;
 	}
 
 	/**
@@ -48,8 +48,8 @@ class BookmarkController extends ApiController {
 	 *
 	 * @NoAdminRequired
 	 */
-	public function legacyGetBookmarks($type = "bookmark", $tag = '', $page = 0, $sort = "bookmarks_sorting_recent") {
-		return $this->getBookmarks($type, $tag, $page, $sort);
+	public function legacyGetMedionlibrarys($type = "medionlibrary", $tag = '', $page = 0, $sort = "medionlibrarys_sorting_recent") {
+		return $this->getMedionlibrarys($type, $tag, $page, $sort);
 	}
 
 	/**
@@ -61,24 +61,24 @@ class BookmarkController extends ApiController {
 	 *
 	 * @NoAdminRequired
 	 */
-	public function getBookmarks($type = "bookmark", $tag = '', $page = 0, $sort = "bookmarks_sorting_recent") {
+	public function getMedionlibrarys($type = "medionlibrary", $tag = '', $page = 0, $sort = "medionlibrarys_sorting_recent") {
 
 		if ($type == 'rel_tags') {
-			$tags = $this->bookmarks->analyzeTagRequest($tag);
-			$qtags = $this->bookmarks->findTags($this->userId, $tags);
+			$tags = $this->medionlibrarys->analyzeTagRequest($tag);
+			$qtags = $this->medionlibrarys->findTags($this->userId, $tags);
 			return new JSONResponse(array('data' => $qtags, 'status' => 'success'));
-		} else { // type == bookmark
-			$filterTag = $this->bookmarks->analyzeTagRequest($tag);
+		} else { // type == medionlibrary
+			$filterTag = $this->medionlibrarys->analyzeTagRequest($tag);
 
 			$offset = $page * 10;
 
-			if ($sort == 'bookmarks_sorting_clicks') {
+			if ($sort == 'medionlibrarys_sorting_clicks') {
 				$sqlSortColumn = 'clickcount';
 			} else {
 				$sqlSortColumn = 'lastmodified';
 			}
-			$bookmarks = $this->bookmarks->findBookmarks($this->userId, $offset, $sqlSortColumn, $filterTag, true);
-			return new JSONResponse(array('data' => $bookmarks, 'status' => 'success'));
+			$medionlibrarys = $this->medionlibrarys->findMedionlibrarys($this->userId, $offset, $sqlSortColumn, $filterTag, true);
+			return new JSONResponse(array('data' => $medionlibrarys, 'status' => 'success'));
 		}
 	}
 
@@ -92,7 +92,7 @@ class BookmarkController extends ApiController {
 	 *
 	 * @NoAdminRequired
 	 */
-	public function newBookmark($url = "", $item = array(), $title = "", $is_public = false, $description = "") {
+	public function newMedionlibrary($url = "", $item = array(), $title = "", $is_public = false, $description = "") {
 		$title = trim($title);
 		if ($title === '') {
 			$title = $url;
@@ -100,13 +100,13 @@ class BookmarkController extends ApiController {
 			$protocols = '/^(https?|s?ftp)\:\/\//i';
 			try {
 				if (preg_match($protocols, $url)) {
-					$data = $this->bookmarks->getURLMetadata($url);
+					$data = $this->medionlibrarys->getURLMetadata($url);
 					$title = isset($data['title']) ? $data['title'] : $title;
 				} else {
 					// if no allowed protocol is given, evaluate https and https
 					foreach(['https://', 'http://'] as $protocol) {
 						$testUrl = $protocol . $url;
-						$data = $this->bookmarks->getURLMetadata($testUrl);
+						$data = $this->medionlibrarys->getURLMetadata($testUrl);
 						if(isset($data['title'])) {
 							$title = $data['title'];
 							$url   = $testUrl;
@@ -117,7 +117,7 @@ class BookmarkController extends ApiController {
 			} catch (\Exception $e) {
 				// only because the server cannot reach a certain URL it does not
 				// mean the user's browser cannot.
-				\OC::$server->getLogger()->logException($e, ['app' => 'bookmarks']);
+				\OC::$server->getLogger()->logException($e, ['app' => 'medionlibrarys']);
 			}
 		}
 
@@ -129,8 +129,8 @@ class BookmarkController extends ApiController {
 
 		$tags = isset($item['tags']) ? $item['tags'] : array();
 
-		$id = $this->bookmarks->addBookmark($this->userId, $url, $title, $tags, $description, $is_public);
-		$bm = $this->bookmarks->findUniqueBookmark($id, $this->userId);
+		$id = $this->medionlibrarys->addMedionlibrary($this->userId, $url, $title, $tags, $description, $is_public);
+		$bm = $this->medionlibrarys->findUniqueMedionlibrary($id, $this->userId);
 		return new JSONResponse(array('item' => $bm, 'status' => 'success'));
 	}
 
@@ -147,11 +147,11 @@ class BookmarkController extends ApiController {
 	 * @NoAdminRequired
 	 */
 	//TODO id vs record_id?
-	public function legacyEditBookmark($id = null, $url = "", $item = array(), $title = "", $is_public = false, $record_id = null, $description = "") {
+	public function legacyEditMedionlibrary($id = null, $url = "", $item = array(), $title = "", $is_public = false, $record_id = null, $description = "") {
 		if ($id == null) {
-			return $this->newBookmark($url, $item, $title, $is_public, $description);
+			return $this->newMedionlibrary($url, $item, $title, $is_public, $description);
 		} else {
-			return $this->editBookmark($id, $url, $item, $title, $is_public, $record_id, $description);
+			return $this->editMedionlibrary($id, $url, $item, $title, $is_public, $record_id, $description);
 		}
 	}
 
@@ -167,7 +167,7 @@ class BookmarkController extends ApiController {
 	 *
 	 * @NoAdminRequired
 	 */
-	public function editBookmark($id = null, $url = "", $item = array(), $title = "", $is_public = false, $record_id = null, $description = "") {
+	public function editMedionlibrary($id = null, $url = "", $item = array(), $title = "", $is_public = false, $record_id = null, $description = "") {
 
 		// Check if it is a valid URL
 		$urlData = parse_url($url);
@@ -182,10 +182,10 @@ class BookmarkController extends ApiController {
 		$tags = isset($item['tags']) ? $item['tags'] : array();
 
 		if (is_numeric($record_id)) {
-			$id = $this->bookmarks->editBookmark($this->userId, $record_id, $url, $title, $tags, $description, $is_public = false);
+			$id = $this->medionlibrarys->editMedionlibrary($this->userId, $record_id, $url, $title, $tags, $description, $is_public = false);
 		}
 
-		$bm = $this->bookmarks->findUniqueBookmark($id, $this->userId);
+		$bm = $this->medionlibrarys->findUniqueMedionlibrary($id, $this->userId);
 		return new JSONResponse(array('item' => $bm, 'status' => 'success'));
 	}
 
@@ -195,8 +195,8 @@ class BookmarkController extends ApiController {
 	 *
 	 * @NoAdminRequired
 	 */
-	public function legacyDeleteBookmark($id = -1) {
-		return $this->deleteBookmark($id);
+	public function legacyDeleteMedionlibrary($id = -1) {
+		return $this->deleteMedionlibrary($id);
 	}
 
 	/**
@@ -205,12 +205,12 @@ class BookmarkController extends ApiController {
 	 *
 	 * @NoAdminRequired
 	 */
-	public function deleteBookmark($id = -1) {
+	public function deleteMedionlibrary($id = -1) {
 		if ($id == -1) {
 			return new JSONResponse(array(), Http::STATUS_BAD_REQUEST);
 		}
 
-		if (!$this->bookmarks->deleteUrl($this->userId, $id)) {
+		if (!$this->medionlibrarys->deleteUrl($this->userId, $id)) {
 			return new JSONResponse(array(), Http::STATUS_BAD_REQUEST);
 		} else {
 			return new JSONResponse(array('status' => 'success'), Http::STATUS_OK);
@@ -223,14 +223,14 @@ class BookmarkController extends ApiController {
 	 * @param string $url
 	 * @return \OCP\AppFramework\Http\JSONResponse
 	 */
-	public function clickBookmark($url = "") {
+	public function clickMedionlibrary($url = "") {
 		$urlData = parse_url($url);
 		if(!$this->isProperURL($urlData)) {
 			return new JSONResponse(array(), Http::STATUS_BAD_REQUEST);
 		}
 
 		$query = $this->db->prepareQuery('
-			UPDATE `*PREFIX*bookmarks`
+			UPDATE `*PREFIX*medionlibrarys`
 			SET `clickcount` = `clickcount` + 1
 			WHERE `user_id` = ?
 				AND `url` LIKE ?
@@ -247,18 +247,18 @@ class BookmarkController extends ApiController {
 	 * 
 	 * @return \OCP\AppFramework\Http\JSONResponse
 	 */
-	public function importBookmark() {
+	public function importMedionlibrary() {
 		$full_input = $this->request->getUploadedFile("bm_import");
 
 		if (empty($full_input)) {
-			Util::writeLog('bookmarks', "No file provided for import", Util::WARN);
+			Util::writeLog('medionlibrarys', "No file provided for import", Util::WARN);
 			$error = array();
 			$error[] = $this->l10n->t('No file provided for import');
 		} else {
 			$error = array();
 			$file = $full_input['tmp_name'];
 			if ($full_input['type'] == 'text/html') {
-				$error = $this->bookmarks->importFile($this->userId, $file);
+				$error = $this->medionlibrarys->importFile($this->userId, $file);
 				if (empty($error)) {
 					return new JSONResponse(array('status' => 'success'));
 				}
@@ -275,20 +275,20 @@ class BookmarkController extends ApiController {
 	 * 
 	 * @return \OCP\AppFramework\Http\Response
 	 */
-	public function exportBookmark() {
+	public function exportMedionlibrary() {
 
 		$file = <<<EOT
-<!DOCTYPE NETSCAPE-Bookmark-file-1>
+<!DOCTYPE NETSCAPE-Medionlibrary-file-1>
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
 <!-- This is an automatically generated file.
 It will be read and overwritten.
 Do Not Edit! -->
-<TITLE>Bookmarks</TITLE>
-<H1>Bookmarks</H1>
+<TITLE>Medionlibrarys</TITLE>
+<H1>Medionlibrarys</H1>
 <DL><p>
 EOT;
-		$bookmarks = $this->bookmarks->findBookmarks($this->userId, 0, 'id', [], true, -1);
-		foreach ($bookmarks as $bm) {
+		$medionlibrarys = $this->medionlibrarys->findMedionlibrarys($this->userId, 0, 'id', [], true, -1);
+		foreach ($medionlibrarys as $bm) {
 			$title = $bm['title'];
 			if (trim($title) === '') {
 				$url_parts = parse_url($bm['url']);

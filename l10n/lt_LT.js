@@ -1,7 +1,7 @@
 OC.L10N.register(
-    "bookmarks",
+    "medionlibrarys",
     {
-    "Bookmarks" : "Žymekliai",
+    "Medionlibrarys" : "Žymekliai",
     "Bookm." : "Žym.",
     "No file provided for import" : "Nepateiktas failas importavimui",
     "Unsupported file type for import" : "Netinkamas failo tipas importavimui",
@@ -13,7 +13,7 @@ OC.L10N.register(
     "Import error" : "Importavimo klaida",
     "Import completed successfully." : "Importavimas baigtas sėkmingai.",
     "Uploading..." : "Įkeliama...",
-    "Add a bookmark" : "Pridėti žymelę",
+    "Add a medionlibrary" : "Pridėti žymelę",
     "The title of the page" : "Puslapio antraštė",
     "The address of the page" : "Puslapio adresas",
     "Description of the page" : "Puslapio aprašymas",
@@ -23,7 +23,7 @@ OC.L10N.register(
     "Cancel" : "Atšaukti",
     "Add to ownCloud" : "Pridėti į ownCloud",
     "Address" : "Adresas",
-    "You have no bookmarks" : "Jūs neturite žymelių",
+    "You have no medionlibrarys" : "Jūs neturite žymelių",
     "Export & Import" : "Eksportavimas / Importavimas",
     "Export" : "Eksportuoti",
     "Import" : "Importuoti"

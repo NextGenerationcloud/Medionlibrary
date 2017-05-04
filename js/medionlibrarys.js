@@ -1,7 +1,7 @@
-var bookmarksPage = 0;
-var bookmarksLoading = false;
+var medionlibrarysPage = 0;
+var medionlibrarysLoading = false;
 var dialog;
-var bookmarksSorting = 'bookmarks_sorting_recent';
+var medionlibrarysSorting = 'medionlibrarys_sorting_recent';
 var fullTags = [];
 var ajaxCallCount = 0;
 
@@ -17,14 +17,14 @@ $(document).ready(function () {
 			$('#app-settings').click();
 		}
 	});
-	$('.bookmarks_list').scroll(updateOnBottom).empty();
+	$('.medionlibrarys_list').scroll(updateOnBottom).empty();
 	$('#tag_filter input').tagit({
 		allowSpaces: true,
 		availableTags: fullTags,
 		onTagFinishRemoved: filterTagsChanged,
-		placeholderText: t('bookmarks', 'Filter by tag')
+		placeholderText: t('medionlibrarys', 'Filter by tag')
 	}).tagit('option', 'onTagAdded', filterTagsChanged);
-	getBookmarks();
+	getMedionlibrarys();
 });
 
 function getTags() {
@@ -65,11 +65,11 @@ function decreaseAjaxCallCount() {
 
 function updateLoadingAnimation() {
 	if (ajaxCallCount === 0) {
-		$('#bookmark_add_submit').removeClass('icon-loading-small');
-		$('#bookmark_add_submit').addClass('icon-add');
+		$('#medionlibrary_add_submit').removeClass('icon-loading-small');
+		$('#medionlibrary_add_submit').addClass('icon-add');
 	} else {
-		$('#bookmark_add_submit').removeClass('icon-add');
-		$('#bookmark_add_submit').addClass('icon-loading-small');
+		$('#medionlibrary_add_submit').removeClass('icon-add');
+		$('#medionlibrary_add_submit').addClass('icon-loading-small');
 	}
 }
 
@@ -108,25 +108,25 @@ function updateTagsList(tag) {
 
 function filterTagsChanged()
 {
-	$('#bookmarkFilterTag').val($('#tag_filter input').val());
-	$('.bookmarks_list').empty();
-	bookmarksPage = 0;
-	getBookmarks();
+	$('#medionlibraryFilterTag').val($('#tag_filter input').val());
+	$('.medionlibrarys_list').empty();
+	medionlibrarysPage = 0;
+	getMedionlibrarys();
 }
-function getBookmarks() {
-	if (bookmarksLoading) {
+function getMedionlibrarys() {
+	if (medionlibrarysLoading) {
 		//have patience :)
 		return;
 	}
 	increaseAjaxCallCount();
-	bookmarksLoading = true;
+	medionlibrarysLoading = true;
 	//Update Rel Tags if first page
-	if (bookmarksPage === 0) {
+	if (medionlibrarysPage === 0) {
 
 		$.ajax({
 			type: 'GET',
-			url: 'bookmark',
-			data: {type: 'rel_tags', tag: $('#bookmarkFilterTag').val(), page: bookmarksPage, sort: bookmarksSorting},
+			url: 'medionlibrary',
+			data: {type: 'rel_tags', tag: $('#medionlibraryFilterTag').val(), page: medionlibrarysPage, sort: medionlibrarysSorting},
 			success: function (tags) {
 				$('.tag_list').empty();
 				for (var i in tags.data) {
@@ -142,30 +142,30 @@ function getBookmarks() {
 	}
 	$.ajax({
 		type: 'GET',
-		url: 'bookmark',
-		data: {type: 'bookmark', tag: $('#bookmarkFilterTag').val(), page: bookmarksPage, sort: bookmarksSorting},
+		url: 'medionlibrary',
+		data: {type: 'medionlibrary', tag: $('#medionlibraryFilterTag').val(), page: medionlibrarysPage, sort: medionlibrarysSorting},
 		complete: function () {
 			decreaseAjaxCallCount();
 		},
-		success: function (bookmarks) {
-			if (bookmarks.data.length) {
-				bookmarksPage += 1;
+		success: function (medionlibrarys) {
+			if (medionlibrarys.data.length) {
+				medionlibrarysPage += 1;
 			}
-			$('.bookmark_link').unbind('click', recordClick);
-			$('.bookmark_delete').unbind('click', delBookmark);
-			$('.bookmark_edit').unbind('click', editBookmark);
+			$('.medionlibrary_link').unbind('click', recordClick);
+			$('.medionlibrary_delete').unbind('click', delMedionlibrary);
+			$('.medionlibrary_edit').unbind('click', editMedionlibrary);
 
-			for (var i in bookmarks.data) {
-				updateBookmarksList(bookmarks.data[i]);
+			for (var i in medionlibrarys.data) {
+				updateMedionlibrarysList(medionlibrarys.data[i]);
 			}
 			checkEmpty();
 
-			$('.bookmark_link').click(recordClick);
-			$('.bookmark_delete').click(delBookmark);
-			$('.bookmark_edit').click(editBookmark);
+			$('.medionlibrary_link').click(recordClick);
+			$('.medionlibrary_delete').click(delMedionlibrary);
+			$('.medionlibrary_edit').click(editMedionlibrary);
 
-			bookmarksLoading = false;
-			if (bookmarks.data.length) {
+			medionlibrarysLoading = false;
+			if (medionlibrarys.data.length) {
 				updateOnBottom();
 			}
 		}
@@ -175,7 +175,7 @@ function getBookmarks() {
 function watchUrlField() {
 	var form = $('#add_form');
 	var el = $('#add_url');
-	var button = $('#bookmark_add_submit');
+	var button = $('#medionlibrary_add_submit');
 	form.unbind('submit');
 	if (!acceptUrl(el.val())) {
 		form.bind('submit', function (e) {
@@ -185,7 +185,7 @@ function watchUrlField() {
 	}
 	else {
 		button.removeClass('disabled');
-		form.bind('submit', addBookmark);
+		form.bind('submit', addMedionlibrary);
 	}
 }
 
@@ -193,7 +193,7 @@ function acceptUrl(url) {
 	return url.replace(/^\s+/g, '').replace(/\s+$/g, '') !== '';
 }
 
-function addBookmark(event) {
+function addMedionlibrary(event) {
 	event.preventDefault();
 	var url = $('#add_url').val();
 	//If trim is empty
@@ -202,40 +202,40 @@ function addBookmark(event) {
 	}
 
 	$('#add_url').val('');
-	var bookmark = {url: url, description: '', title: '', from_own: 0, added_date: new Date()};
+	var medionlibrary = {url: url, description: '', title: '', from_own: 0, added_date: new Date()};
 	increaseAjaxCallCount();
 	$.ajax({
 		type: 'POST',
-		url: 'bookmark',
-		data: bookmark,
+		url: 'medionlibrary',
+		data: medionlibrary,
 		complete: function () {
 			decreaseAjaxCallCount();
 		},
 		success: function (data) {
 			if (data.status === 'success') {
 				// First remove old BM if exists
-				$('.bookmark_single').filterAttr('data-id', data.item.id).remove();
+				$('.medionlibrary_single').filterAttr('data-id', data.item.id).remove();
 
-				var bookmark = $.extend({}, bookmark, data.item);
-				updateBookmarksList(bookmark, 'prepend');
+				var medionlibrary = $.extend({}, medionlibrary, data.item);
+				updateMedionlibrarysList(medionlibrary, 'prepend');
 				checkEmpty();
 				watchUrlField();
 			}
 		},
 		error: function () {
-			OC.Notification.showTemporary(t('bookmarks', 'Could not add bookmark.'));
+			OC.Notification.showTemporary(t('medionlibrarys', 'Could not add medionlibrary.'));
 		}
 	});
 }
 
-function delBookmark() {
+function delMedionlibrary() {
 	var record = $(this).parent().parent();
-	OC.dialogs.confirm(t('bookmarks', 'Are you sure you want to remove this bookmark?'),
-			t('bookmarks', 'Warning'), function (answer) {
+	OC.dialogs.confirm(t('medionlibrarys', 'Are you sure you want to remove this medionlibrary?'),
+			t('medionlibrarys', 'Warning'), function (answer) {
 		if (answer) {
 			$.ajax({
 				type: 'DELETE',
-				url: 'bookmark/' + record.data('id'),
+				url: 'medionlibrary/' + record.data('id'),
 				success: function (data) {
 					if (data.status === 'success') {
 						record.remove();
@@ -248,34 +248,34 @@ function delBookmark() {
 }
 
 function checkEmpty() {
-	if ($('.bookmarks_list').children().length === 0) {
+	if ($('.medionlibrarys_list').children().length === 0) {
 		$("#emptycontent").show();
 		$("#bm_export").addClass('disabled');
-		$('.bookmarks_list').hide();
+		$('.medionlibrarys_list').hide();
 	} else {
 		$("#emptycontent").hide();
 		$("#bm_export").removeClass('disabled');
-		$('.bookmarks_list').show();
+		$('.medionlibrarys_list').show();
 	}
 }
-function editBookmark() {
-	if ($('.bookmark_single_form').length) {
-		$('.bookmark_single_form .reset').click();
+function editMedionlibrary() {
+	if ($('.medionlibrary_single_form').length) {
+		$('.medionlibrary_single_form .reset').click();
 	}
 	var record = $(this).parent().parent();
-	var bookmark = record.data('record');
-	var html = tmpl("item_form_tmpl", bookmark);
+	var medionlibrary = record.data('record');
+	var html = tmpl("item_form_tmpl", medionlibrary);
 
 	record.after(html);
 	record.hide();
 	var rec_form = record.next().find('form');
-	rec_form.find('.bookmark_form_tags ul').tagit({
+	rec_form.find('.medionlibrary_form_tags ul').tagit({
 		allowSpaces: true,
 		availableTags: fullTags,
-		placeholderText: t('bookmarks', 'Tags')
+		placeholderText: t('medionlibrarys', 'Tags')
 	});
 
-	rec_form.find('.reset').bind('click', cancelBookmark);
+	rec_form.find('.reset').bind('click', cancelMedionlibrary);
 	rec_form.bind('submit', function (event) {
 		event.preventDefault();
 		var form_values = $(this).serialize();
@@ -295,66 +295,66 @@ function editBookmark() {
 	});
 }
 
-function cancelBookmark(event) {
+function cancelMedionlibrary(event) {
 	event.preventDefault();
 	var rec_form = $(this).closest('form').parent();
 	rec_form.prev().show();
 	rec_form.remove();
 }
 
-function updateBookmarksList(bookmark, position) {
+function updateMedionlibrarysList(medionlibrary, position) {
 	position = typeof position !== 'undefined' ? position : 'append';
-	bookmark = $.extend({title: '', description: '', added_date: new Date('now'), tags: []}, bookmark);
-	var tags = bookmark.tags;
+	medionlibrary = $.extend({title: '', description: '', added_date: new Date('now'), tags: []}, medionlibrary);
+	var tags = medionlibrary.tags;
 	var taglist = '';
 	for (var i = 0, len = tags.length; i < len; ++i) {
 		if (tags[i] !== '')
-			taglist = taglist + '<a class="bookmark_tag" href="#">' + escapeHTML(tags[i]) + '</a> ';
+			taglist = taglist + '<a class="medionlibrary_tag" href="#">' + escapeHTML(tags[i]) + '</a> ';
 	}
-	if (!hasProtocol(bookmark.url)) {
-		bookmark.url = 'http://' + bookmark.url;
-	}
-
-	if (bookmark.added) {
-		bookmark.added_date.setTime(parseInt(bookmark.added) * 1000);
+	if (!hasProtocol(medionlibrary.url)) {
+		medionlibrary.url = 'http://' + medionlibrary.url;
 	}
 
-	if (!bookmark.title)
-		bookmark.title = '';
+	if (medionlibrary.added) {
+		medionlibrary.added_date.setTime(parseInt(medionlibrary.added) * 1000);
+	}
 
-	var html = tmpl("item_tmpl", bookmark);
+	if (!medionlibrary.title)
+		medionlibrary.title = '';
+
+	var html = tmpl("item_tmpl", medionlibrary);
 	if (position === "prepend") {
-		$('.bookmarks_list').prepend(html);
+		$('.medionlibrarys_list').prepend(html);
 	} else {
-		$('.bookmarks_list').append(html);
+		$('.medionlibrarys_list').append(html);
 	}
-	var line = $('div[data-id="' + bookmark.id + '"]');
-	line.data('record', bookmark);
+	var line = $('div[data-id="' + medionlibrary.id + '"]');
+	line.data('record', medionlibrary);
 	if (taglist !== '') {
-		line.append('<p class="bookmark_tags">' + taglist + '</p>');
+		line.append('<p class="medionlibrary_tags">' + taglist + '</p>');
 	}
-	line.find('a.bookmark_tag').bind('click', addFilterTag);
-	line.find('.bookmark_link').click(recordClick);
-	line.find('.bookmark_delete').click(delBookmark);
-	line.find('.bookmark_edit').click(editBookmark);
+	line.find('a.medionlibrary_tag').bind('click', addFilterTag);
+	line.find('.medionlibrary_link').click(recordClick);
+	line.find('.medionlibrary_delete').click(delMedionlibrary);
+	line.find('.medionlibrary_edit').click(editMedionlibrary);
 
 }
 
 function updateOnBottom() {
 	//check wether user is on bottom of the page
-	var top = $('.bookmarks_list>:last-child').position().top;
-	var height = $('.bookmarks_list').height();
+	var top = $('.medionlibrarys_list>:last-child').position().top;
+	var height = $('.medionlibrarys_list').height();
 	// use a bit of margin to begin loading before we are really at the
 	// bottom
 	if (top < height * 1.2) {
-		getBookmarks();
+		getMedionlibrarys();
 	}
 }
 
 function recordClick() {
 	$.ajax({
 		type: 'POST',
-		url: 'bookmark/click',
+		url: 'medionlibrary/click',
 		data: 'url=' + encodeURIComponent($(this).attr('href'))
 	});
 }
@@ -394,8 +394,8 @@ function submitTagName(event) {
 			type: 'POST',
 			url: 'tag',
 			data: {old_name: oldTagName, new_name: newTagName},
-			success: function (bookmarks) {
-				if (bookmarks.status === 'success') {
+			success: function (medionlibrarys) {
+				if (medionlibrarys.status === 'success') {
 					filterTagsChanged();
 				}
 			}
@@ -406,15 +406,15 @@ function submitTagName(event) {
 function deleteTag() {
 	var tag_el = $(this).closest('li');
 	var old_tag_name = tag_el.find('.tag').show().text();
-	OC.dialogs.confirm(t('bookmarks', 'Are you sure you want to remove this tag from every entry?'),
-			t('bookmarks', 'Warning'), function (answer) {
+	OC.dialogs.confirm(t('medionlibrarys', 'Are you sure you want to remove this tag from every entry?'),
+			t('medionlibrarys', 'Warning'), function (answer) {
 		if (answer) {
 			$.ajax({
 				type: 'DELETE',
 				url: 'tag',
 				data: {old_name: old_tag_name},
-				success: function (bookmarks) {
-					if (bookmarks.status === 'success') {
+				success: function (medionlibrarys) {
+					if (medionlibrarys.status === 'success') {
 						filterTagsChanged();
 					}
 				}

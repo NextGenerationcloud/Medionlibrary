@@ -1,11 +1,11 @@
 <?php
-script('bookmarks', 'settings');
-script('bookmarks', 'bookmarks');
-style('bookmarks', 'bookmarks');
+script('medionlibrarys', 'settings');
+script('medionlibrarys', 'medionlibrarys');
+style('medionlibrarys', 'medionlibrarys');
 
-script('bookmarks', '3rdparty/tag-it');
-script('bookmarks', '3rdparty/js_tpl');
-style('bookmarks', '3rdparty/jquery.tagit');
+script('medionlibrarys', '3rdparty/tag-it');
+script('medionlibrarys', '3rdparty/js_tpl');
+style('medionlibrarys', '3rdparty/jquery.tagit');
 
 /**
  * Copyright (c) 2011 Marvin Thomas Rabe <mrabe@marvinrabe.de>
@@ -14,17 +14,17 @@ style('bookmarks', '3rdparty/jquery.tagit');
  * later.
  * See the COPYING-README file.
  */
-$bookmarkleturl = $_['bookmarkleturl'];
-$bookmarkletscript = bookmarklet($bookmarkleturl);
+$medionlibraryleturl = $_['medionlibraryleturl'];
+$medionlibraryletscript = medionlibrarylet($medionlibraryleturl);
 
-function bookmarklet($bookmarkleturl) {
-	$l = \OC::$server->getL10N('bookmarks');
+function medionlibrarylet($medionlibraryleturl) {
+	$l = \OC::$server->getL10N('medionlibrarys');
 	$defaults = \OC::$server->getThemingDefaults();
 	$blet = "javascript:(function(){var a=window,b=document,c=encodeURIComponent,e=c(document.title),d=a.open('";
-	$blet .= $bookmarkleturl;
+	$blet .= $medionlibraryleturl;
 	$blet .= "?output=popup&url='+c(b.location)+'&title='+e,'bkmk_popup','left='+((a.screenX||a.screenLeft)+10)+',top='+((a.screenY||a.screenTop)+10)+',height=400px,width=550px,resizable=1,alwaysRaised=1');a.setTimeout(function(){d.focus()},300);})();";
-	$help_msg = $l->t('Drag this to your browser bookmarks and click it, when you want to bookmark a webpage quickly:');
-	$output = '<div id="bookmarklet_hint" class="bkm_hint">' . $help_msg . '</div><a class="button bookmarklet" href="' . $blet . '">' . $l->t('Add to ' . \OCP\Util::sanitizeHTML($defaults->getName())) . '</a>';
+	$help_msg = $l->t('Drag this to your browser medionlibrarys and click it, when you want to medionlibrary a webpage quickly:');
+	$output = '<div id="medionlibrarylet_hint" class="bkm_hint">' . $help_msg . '</div><a class="button medionlibrarylet" href="' . $blet . '">' . $l->t('Add to ' . \OCP\Util::sanitizeHTML($defaults->getName())) . '</a>';
 	return $output;
 }
 ?>
@@ -34,14 +34,14 @@ function bookmarklet($bookmarkleturl) {
         <li>
             <form id="add_form">
                 <input type="text" id="add_url" value="" placeholder="<?php p($l->t('Address')); ?>"/>
-                <button id="bookmark_add_submit" title="Add" class="icon-add"></button>
+                <button id="medionlibrary_add_submit" title="Add" class="icon-add"></button>
             </form>
             <p id="tag_filter" class="open">
                 <input type="text" value="<?php if(isset($_['req_tag'])) p($_['req_tag']); else ""; ?>"/>
 
 
             </p>
-            <input type="hidden" id="bookmarkFilterTag" value="<?php if(isset($_['req_tag'])) p($_['req_tag']); else ""; ?>" />
+            <input type="hidden" id="medionlibraryFilterTag" value="<?php if(isset($_['req_tag'])) p($_['req_tag']); else ""; ?>" />
             <label id="tag_select_label"><?php p($l->t('Filterable Tags')); ?></label>
         </li>
         <li class="tag_list">
@@ -63,19 +63,19 @@ function bookmarklet($bookmarkleturl) {
 <div id="app-content">
     <div id="emptycontent" style="display: none;">
         <p class="title"><?php
-			p($l->t('You have no bookmarks'));
+			p($l->t('You have no medionlibrarys'));
 			$embedded = true;
-			print_unescaped($bookmarkletscript);
+			print_unescaped($medionlibraryletscript);
 			?></p>
         <br/><br/>
 
 
         <div class="bkm_hint">
             <a href="#" id="firstrun_setting">
-				<?php p($l->t('You can also import a bookmark file')); ?>
+				<?php p($l->t('You can also import a medionlibrary file')); ?>
             </a></div>
     </div>
-    <div class="bookmarks_list"></div>
+    <div class="medionlibrarys_list"></div>
 </div>
 
 <?php

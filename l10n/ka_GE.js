@@ -1,7 +1,7 @@
 OC.L10N.register(
-    "bookmarks",
+    "medionlibrarys",
     {
-    "Bookmarks" : "ბუქმარკები",
+    "Medionlibrarys" : "ბუქმარკები",
     "Bookm." : "Bookm.",
     "No file provided for import" : "არ არის ფაილი იმპორტისთვის",
     "Unsupported file type for import" : "დაუშვებელი ფაილის ტიპი იმპორტისთვის",
@@ -13,7 +13,7 @@ OC.L10N.register(
     "Import error" : "შეცდომა იმპორტის დროს",
     "Import completed successfully." : "იმპორტირება დასრულებულია.",
     "Uploading..." : "მიმდინარეობს ატვირთვა...",
-    "Add a bookmark" : "ბუქმარქში დამატება",
+    "Add a medionlibrary" : "ბუქმარქში დამატება",
     "The title of the page" : "გვერდის სათაური",
     "The address of the page" : "გვერდის მისამართი",
     "Description of the page" : "გვერდის დახასიათება",
@@ -21,10 +21,10 @@ OC.L10N.register(
     "Delete" : "წაშლა",
     "Edit" : "რედაქტირება",
     "Cancel" : "უარყოფა",
-    "Drag this to your browser bookmarks and click it, when you want to bookmark a webpage quickly:" : "გადაათრიეთ ეს თქვენს ბუქმარკებში თუ გინდათ რომ საითი სწრაფად დაბუქმარკდეს",
+    "Drag this to your browser medionlibrarys and click it, when you want to medionlibrary a webpage quickly:" : "გადაათრიეთ ეს თქვენს ბუქმარკებში თუ გინდათ რომ საითი სწრაფად დაბუქმარკდეს",
     "Address" : "მისამართი",
-    "You have no bookmarks" : "თქვენ არ გაქვთ ბუქმარკები",
-    "Bookmarklet" : "ბუქმარქლეტი",
+    "You have no medionlibrarys" : "თქვენ არ გაქვთ ბუქმარკები",
+    "Medionlibrarylet" : "ბუქმარქლეტი",
     "Export & Import" : "ექსპორტ & იმპორტი",
     "Export" : "ექსპორტი",
     "Import" : "იმპორტი"

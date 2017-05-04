@@ -1,6 +1,6 @@
 <?php
 $TRANSLATIONS = array(
-"Bookmarks" => "收藏",
+"Medionlibrarys" => "收藏",
 "Warning" => "警告",
 "Close" => "關閉",
 "Save" => "儲存",

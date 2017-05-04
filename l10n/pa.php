@@ -1,6 +1,6 @@
 <?php
 $TRANSLATIONS = array(
-"Bookmarks" => "ਬੁੱਕਮਾਰ",
+"Medionlibrarys" => "ਬੁੱਕਮਾਰ",
 "Warning" => "ਚੇਤਾਵਨੀ",
 "Delete" => "ਹਟਾਓ",
 "Cancel" => "ਰੱਦ ਕਰੋ",

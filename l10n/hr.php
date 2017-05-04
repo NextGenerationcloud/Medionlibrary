@@ -1,6 +1,6 @@
 <?php
 $TRANSLATIONS = array(
-"Bookmarks" => "Zabilješke",
+"Medionlibrarys" => "Zabilješke",
 "Close" => "Zatvori",
 "Save" => "Snimi",
 "Delete" => "Obriši",

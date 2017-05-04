@@ -6,16 +6,16 @@
 		 timeoutForMediumTests="900"
 		 timeoutForLargeTests="900"
 >
-	<testsuite name='Bookmarks App Tests'>
+	<testsuite name='Medionlibrarys App Tests'>
 		<directory suffix='test.php'>.</directory>
 	</testsuite>
 	<!-- filters for code coverage -->
 	<filter>
 		<whitelist>
-			<directory suffix=".php">../../bookmarks</directory>
+			<directory suffix=".php">../../medionlibrarys</directory>
 			<exclude>
-				<directory suffix=".php">../../bookmarks/l10n</directory>
-				<directory suffix=".php">../../bookmarks/tests</directory>
+				<directory suffix=".php">../../medionlibrarys/l10n</directory>
+				<directory suffix=".php">../../medionlibrarys/tests</directory>
 			</exclude>
 		</whitelist>
 	</filter>

@@ -1,8 +1,8 @@
 <?php
 
-namespace OCA\Bookmarks\Controller\Rest;
+namespace OCA\Medionlibrarys\Controller\Rest;
 
-use \OCA\Bookmarks\Controller\Lib\Bookmarks;
+use \OCA\Medionlibrarys\Controller\Lib\Medionlibrarys;
 use \OCP\AppFramework\Http\JSONResponse;
 use \OCP\AppFramework\Http;
 use \OCP\AppFramework\ApiController;
@@ -12,13 +12,13 @@ class TagsController extends ApiController {
 
 	private $userId;
 
-	/** @var Bookmarks */
-	private $bookmarks;
+	/** @var Medionlibrarys */
+	private $medionlibrarys;
 
-	public function __construct($appName, IRequest $request, $userId, Bookmarks $bookmarks) {
+	public function __construct($appName, IRequest $request, $userId, Medionlibrarys $medionlibrarys) {
 		parent::__construct($appName, $request);
 		$this->userId = $userId;
-		$this->bookmarks = $bookmarks;
+		$this->medionlibrarys = $medionlibrarys;
 	}
 
 	/**
@@ -33,7 +33,7 @@ class TagsController extends ApiController {
 			return new JSONResponse(array(), Http::STATUS_BAD_REQUEST);
 		}
 
-		$this->bookmarks->deleteTag($this->userId, $old_name);
+		$this->medionlibrarys->deleteTag($this->userId, $old_name);
 		return new JSONResponse(array('status' => 'success'));
 	}
 
@@ -50,7 +50,7 @@ class TagsController extends ApiController {
 			return new JSONResponse(array(), Http::STATUS_BAD_REQUEST);
 		}
 
-		$this->bookmarks->renameTag($this->userId, $old_name, $new_name);
+		$this->medionlibrarys->renameTag($this->userId, $old_name, $new_name);
 		return new JSONResponse(array('status' => 'success'));
 	}
 
@@ -62,7 +62,7 @@ class TagsController extends ApiController {
 		header("Cache-Control: no-cache, must-revalidate");
 		header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
 		
-		$qtags = $this->bookmarks->findTags($this->userId, array(), 0, 400);
+		$qtags = $this->medionlibrarys->findTags($this->userId, array(), 0, 400);
 		$tags = array();
 		foreach ($qtags as $tag) {
 			$tags[] = $tag['tag'];

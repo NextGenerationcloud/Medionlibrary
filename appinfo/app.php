@@ -11,17 +11,17 @@
  * @copyright (c) 2014, Stefan Klemm
  */
 
-namespace OCA\Bookmarks\AppInfo;
+namespace OCA\Medionlibrarys\AppInfo;
 
 $navigationEntry = function () {
 	return [
-		'id' => 'bookmarks',
+		'id' => 'medionlibrarys',
 		'order' => 10,
-		'name' => \OC::$server->getL10N('bookmarks')->t('Bookmarks'),
-		'href' => \OC::$server->getURLGenerator()->linkToRoute('bookmarks.web_view.index'),
-		'icon' => \OC::$server->getURLGenerator()->imagePath('bookmarks', 'bookmarks.svg'),
+		'name' => \OC::$server->getL10N('medionlibrarys')->t('Medionlibrarys'),
+		'href' => \OC::$server->getURLGenerator()->linkToRoute('medionlibrarys.web_view.index'),
+		'icon' => \OC::$server->getURLGenerator()->imagePath('medionlibrarys', 'medionlibrarys.svg'),
 	];
 };
 \OC::$server->getNavigationManager()->add($navigationEntry);
 
-\OC::$server->getSearch()->registerProvider('OCA\Bookmarks\Controller\Lib\Search', array('apps' => array('bookmarks')));
+\OC::$server->getSearch()->registerProvider('OCA\Medionlibrarys\Controller\Lib\Search', array('apps' => array('medionlibrarys')));

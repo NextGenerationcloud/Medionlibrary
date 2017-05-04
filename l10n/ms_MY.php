@@ -1,6 +1,6 @@
 <?php
 $TRANSLATIONS = array(
-"Bookmarks" => "Tanda",
+"Medionlibrarys" => "Tanda",
 "Warning" => "Amaran",
 "Close" => "Tutup",
 "Save" => "Simpan",

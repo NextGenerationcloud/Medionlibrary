@@ -1,7 +1,7 @@
 OC.L10N.register(
-    "bookmarks",
+    "medionlibrarys",
     {
-    "Bookmarks" : "Laster-markak",
+    "Medionlibrarys" : "Laster-markak",
     "Bookm." : "Lasterm.",
     "No file provided for import" : "Ez da inportatzeko fitxategirik zehaztu",
     "Unsupported file type for import" : "Fitxategi mota hau ez da onartzen inportatzeko.",
@@ -13,7 +13,7 @@ OC.L10N.register(
     "Import error" : "Inportazio errorea",
     "Import completed successfully." : "Inportazioa ongi egin da.",
     "Uploading..." : "Igotzen...",
-    "Add a bookmark" : "Gehitu laster-marka",
+    "Add a medionlibrary" : "Gehitu laster-marka",
     "The title of the page" : "Orriaren izenburua",
     "The address of the page" : "Orriaren helbidea",
     "Description of the page" : "Orriaren deskribapena",
@@ -21,11 +21,11 @@ OC.L10N.register(
     "Delete" : "Ezabatu",
     "Edit" : "Editatu",
     "Cancel" : "Ezeztatu",
-    "Drag this to your browser bookmarks and click it, when you want to bookmark a webpage quickly:" : "Web orri bat laster-marketara azkar gehitzeko, arrastratu hau zure arakatzailearen laster-marketara eta klikatu bertan:",
+    "Drag this to your browser medionlibrarys and click it, when you want to medionlibrary a webpage quickly:" : "Web orri bat laster-marketara azkar gehitzeko, arrastratu hau zure arakatzailearen laster-marketara eta klikatu bertan:",
     "Add to ownCloud" : "Gehitu ownCloud-era",
     "Address" : "Helbidea",
-    "You have no bookmarks" : "Ez duzu laster-markarik",
-    "Bookmarklet" : "Bookmarklet",
+    "You have no medionlibrarys" : "Ez duzu laster-markarik",
+    "Medionlibrarylet" : "Medionlibrarylet",
     "Export & Import" : "Exportatu eta inportatu",
     "Export" : "Exportatu",
     "Import" : "Inportatu"

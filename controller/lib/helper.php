@@ -1,6 +1,6 @@
 <?php
 
-namespace OCA\Bookmarks\Controller\Lib;
+namespace OCA\Medionlibrarys\Controller\Lib;
 
 class Helper {
 

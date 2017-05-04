@@ -26,13 +26,13 @@ $(document).ready(function () {
 	$(".submit").click(function () {
 		increaseAjaxCallCount();
 
-		var endpoint = 'bookmark';
+		var endpoint = 'medionlibrary';
 		var method = 'POST';
 		var id = '';
-		if($('#bookmarkID').length > 0) {
-			endpoint += '/'+ $('#bookmarkID').val();
+		if($('#medionlibraryID').length > 0) {
+			endpoint += '/'+ $('#medionlibraryID').val();
 			method = 'PUT';
-			id = '&record_id=' + $('#bookmarkID').val();
+			id = '&record_id=' + $('#medionlibraryID').val();
 		}
 
 		var tags = '';
@@ -50,13 +50,13 @@ $(document).ready(function () {
 			},
 			success: function (data) {
 				if (data.status === 'success') {
-					OC.dialogs.message("Bookmark added.", "Success", undefined, [], undefined, true)
+					OC.dialogs.message("Medionlibrary added.", "Success", undefined, [], undefined, true)
 					_.delay(function() {
 						window.close();
 					}, 1e3);
 				} else {
-					OC.dialogs.alert(t("bookmarks", "Some Error happened."),
-							t("bookmarks", "Error"), null, true);
+					OC.dialogs.alert(t("medionlibrarys", "Some Error happened."),
+							t("medionlibrarys", "Error"), null, true);
 				}
 			}
 		});
@@ -67,7 +67,7 @@ $(document).ready(function () {
 		$('.tags').tagit({
 			allowSpaces: true,
 			availableTags: data,
-			placeholderText: t('bookmark', 'Tags')
+			placeholderText: t('medionlibrary', 'Tags')
 		});
 	});
 });

@@ -22,7 +22,7 @@
  *
  */
 
-namespace OCA\Bookmarks\Tests;
+namespace OCA\Medionlibrarys\Tests;
 
 
 class TestCase extends \Test\TestCase {

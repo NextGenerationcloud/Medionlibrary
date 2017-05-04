@@ -5,7 +5,7 @@
 	<overwrite>false</overwrite>
 	<charset>utf8</charset>
 	<table>
-		<name>*dbprefix*bookmarks</name>
+		<name>*dbprefix*medionlibrarys</name>
 		<declaration>
 			<field>
 				<name>id</name>
@@ -77,10 +77,10 @@
 	</table>
 	
 	<table>
-		<name>*dbprefix*bookmarks_tags</name>
+		<name>*dbprefix*medionlibrarys_tags</name>
 		<declaration>
 			<field>
-				<name>bookmark_id</name>
+				<name>medionlibrary_id</name>
 				<type>integer</type>
 				<length>64</length>
 			</field>
@@ -93,10 +93,10 @@
 				<length>255</length>
 			</field>
 			<index>
-				<name>bookmark_tag</name>
+				<name>medionlibrary_tag</name>
 				<unique>true</unique>
 				<field>
-					<name>bookmark_id</name>
+					<name>medionlibrary_id</name>
 					<sorting>ascending</sorting>
 				</field>
 				<field>

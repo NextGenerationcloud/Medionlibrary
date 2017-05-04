@@ -1,13 +1,13 @@
 <?php
 
-namespace OCA\Bookmarks\Controller\Rest;
+namespace OCA\Medionlibrarys\Controller\Rest;
 
 use \OCP\AppFramework\ApiController;
 use \OCP\IRequest;
 use \OCP\AppFramework\Http;
 use \OCP\AppFramework\Http\JSONResponse;
 use \OC\User\Manager;
-use OCA\Bookmarks\Controller\Lib\Bookmarks;
+use OCA\Medionlibrarys\Controller\Lib\Medionlibrarys;
 use OCP\Util;
 
 class PublicController extends ApiController {
@@ -16,13 +16,13 @@ class PublicController extends ApiController {
 	
 	private $userId;
 
-	/** @var Bookmarks */
-	protected $bookmarks;
+	/** @var Medionlibrarys */
+	protected $medionlibrarys;
 
-	public function __construct($appName, IRequest $request, $userId, Bookmarks $bookmarks, Manager $userManager) {
+	public function __construct($appName, IRequest $request, $userId, Medionlibrarys $medionlibrarys, Manager $userManager) {
 		parent::__construct($appName, $request);
 
-		$this->bookmarks = $bookmarks;
+		$this->medionlibrarys = $medionlibrarys;
 		$this->userManager = $userManager;
 		$this->userId = $userId;
 	}
@@ -40,7 +40,7 @@ class PublicController extends ApiController {
 	 * @NoAdminRequired
 	 * @NoCSRFRequired
 	 */
-	public function newBookmark($url = "", $item = array(), $title = "", $is_public = false, $description = "") {
+	public function newMedionlibrary($url = "", $item = array(), $title = "", $is_public = false, $description = "") {
 		$title = trim($title);
 		if ($title === '') {
 			$title = $url;
@@ -48,13 +48,13 @@ class PublicController extends ApiController {
 			$protocols = '/^(https?|s?ftp)\:\/\//i';
 			try {
 				if (preg_match($protocols, $url)) {
-					$data = $this->bookmarks->getURLMetadata($url);
+					$data = $this->medionlibrarys->getURLMetadata($url);
 					$title = isset($data['title']) ? $data['title'] : $title;
 				} else {
 					// if no allowed protocol is given, evaluate https and https
 					foreach(['https://', 'http://'] as $protocol) {
 						$testUrl = $protocol . $url;
-						$data = $this->bookmarks->getURLMetadata($testUrl);
+						$data = $this->medionlibrarys->getURLMetadata($testUrl);
 						if(isset($data['title'])) {
 							$title = $data['title'];
 							$url   = $testUrl;
@@ -65,7 +65,7 @@ class PublicController extends ApiController {
 			} catch (\Exception $e) {
 				// only because the server cannot reach a certain URL it does not
 				// mean the user's browser cannot.
-				\OC::$server->getLogger()->logException($e, ['app' => 'bookmarks']);
+				\OC::$server->getLogger()->logException($e, ['app' => 'medionlibrarys']);
 			}
 		}
 		// Check if it is a valid URL (after adding http(s) prefix)
@@ -74,8 +74,8 @@ class PublicController extends ApiController {
 			return new JSONResponse(array('status' => 'error'), Http::STATUS_BAD_REQUEST);
 		}
 		$tags = isset($item['tags']) ? $item['tags'] : array();
-		$id = $this->bookmarks->addBookmark($this->userId, $url, $title, $tags, $description, $is_public);
-		$bm = $this->bookmarks->findUniqueBookmark($id, $this->userId);
+		$id = $this->medionlibrarys->addMedionlibrary($this->userId, $url, $title, $tags, $description, $is_public);
+		$bm = $this->medionlibrarys->findUniqueMedionlibrary($id, $this->userId);
 		return new JSONResponse(array('item' => $bm, 'status' => 'success'));
 	}
 	
@@ -93,7 +93,7 @@ class PublicController extends ApiController {
 	 * @NoAdminRequired
 	 * @NoCSRFRequired
 	 */
-	public function editBookmark($record_id = null, $url = "", $item = array(), $title = "", $is_public = false, $description = "") {
+	public function editMedionlibrary($record_id = null, $url = "", $item = array(), $title = "", $is_public = false, $description = "") {
 		// Check if it is a valid URL
 		$urlData = parse_url($url);
 		if(!$this->isProperURL($urlData)) {
@@ -104,9 +104,9 @@ class PublicController extends ApiController {
 		}
 		$tags = isset($item['tags']) ? $item['tags'] : array();
 		if (is_numeric($record_id)) {
-			$id = $this->bookmarks->editBookmark($this->userId, $record_id, $url, $title, $tags, $description, $is_public = false);
+			$id = $this->medionlibrarys->editMedionlibrary($this->userId, $record_id, $url, $title, $tags, $description, $is_public = false);
 		}
-		$bm = $this->bookmarks->findUniqueBookmark($id, $this->userId);
+		$bm = $this->medionlibrarys->findUniqueMedionlibrary($id, $this->userId);
 		return new JSONResponse(array('item' => $bm, 'status' => 'success'));
 	}
 	
@@ -118,11 +118,11 @@ class PublicController extends ApiController {
 	 * @NoAdminRequired
 	 * @NoCSRFRequired
 	 */
-	public function deleteBookmark($id = -1) {
+	public function deleteMedionlibrary($id = -1) {
 		if ($id == -1) {
 			return new JSONResponse(array(), Http::STATUS_BAD_REQUEST);
 		}
-		if (!$this->bookmarks->deleteUrl($this->userId, $id)) {
+		if (!$this->medionlibrarys->deleteUrl($this->userId, $id)) {
 			return new JSONResponse(array(), Http::STATUS_BAD_REQUEST);
 		} else {
 			return new JSONResponse(array('status' => 'success'), Http::STATUS_OK);
@@ -167,7 +167,7 @@ class PublicController extends ApiController {
 		if (!$public && !$this->userManager->checkPassword($user, $password)) {
 
 			$msg = 'REST API accessed with wrong password';
-			Util::writeLog('bookmarks', $msg, Util::WARN);
+			Util::writeLog('medionlibrarys', $msg, Util::WARN);
 
 			return $this->newJsonErrorMessage("Wrong password for user " . $user);
 		}
@@ -179,7 +179,7 @@ class PublicController extends ApiController {
 			$attributesToSelect = array_unique($attributesToSelect);
 		}
 
-		$output = $this->bookmarks->findBookmarks($user, 0, $sortby, $tags, true, -1, $public, $attributesToSelect, $conjunction);
+		$output = $this->medionlibrarys->findMedionlibrarys($user, 0, $sortby, $tags, true, -1, $public, $attributesToSelect, $conjunction);
 
 		if (count($output) == 0) {
 			$output["status"] = 'error';

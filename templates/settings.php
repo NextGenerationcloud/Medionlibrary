@@ -9,10 +9,10 @@
 ?>
 
 <ul>
-	<li><strong><?php p($l->t('Bookmarklet')); ?></strong></li>
-	<?php print_unescaped($bookmarkletscript); ?><br />
+	<li><strong><?php p($l->t('Medionlibrarylet')); ?></strong></li>
+	<?php print_unescaped($medionlibraryletscript); ?><br />
 </ul>
-<form id="import_bookmark" action="bookmark/import" method="post" enctype="multipart/form-data">
+<form id="import_medionlibrary" action="medionlibrary/import" method="post" enctype="multipart/form-data">
 	<ul>
 		<li>
 		</li>
@@ -23,7 +23,7 @@
 			<?php endif; ?>
 
 		<legend><strong><?php p($l->t('Export & Import')); ?></strong></legend>
-		<input type="button" id="bm_export" href="bookmark/export?requesttoken=<?php p(urlencode($_['requesttoken'])) ?>" value="<?php p($l->t('Export')); ?>" />
+		<input type="button" id="bm_export" href="medionlibrary/export?requesttoken=<?php p(urlencode($_['requesttoken'])) ?>" value="<?php p($l->t('Export')); ?>" />
 		<input type="file" id="bm_import" name="bm_import" size="5">
 		<input type="hidden" name="requesttoken" value="<?php p($_['requesttoken']) ?>" id="requesttoken">
 		<button type="button" name="bm_import_btn" id="bm_import_submit"><?php p($l->t('Import')); ?></button>

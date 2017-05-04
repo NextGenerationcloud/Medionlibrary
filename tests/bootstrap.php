@@ -8,7 +8,7 @@ if (!class_exists('PHPUnit_Framework_TestCase')) {
 	require_once('PHPUnit/Autoload.php');
 }
 
-\OC_App::loadApp('bookmarks');
+\OC_App::loadApp('medionlibrarys');
 require_once(__DIR__ . '/TestCase.php'); // stable9 compatibility
 
 // OC >= 9.1 Tests?

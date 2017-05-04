@@ -19,10 +19,10 @@
  *
  */
 /**
- * This class manages bookmarks
+ * This class manages medionlibrarys
  */
 
-namespace OCA\Bookmarks\Controller\Lib;
+namespace OCA\Medionlibrarys\Controller\Lib;
 
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\ClientException;
@@ -33,7 +33,7 @@ use OCP\IDBConnection;
 use OCP\IL10N;
 use OCP\ILogger;
 
-class Bookmarks {
+class Medionlibrarys {
 
 	/** @var IDBConnection */
 	private $db;
@@ -65,7 +65,7 @@ class Bookmarks {
 	}
 
 	/**
-	 * @brief Finds all tags for bookmarks
+	 * @brief Finds all tags for medionlibrarys
 	 * @param string $userId UserId
 	 * @param array $filterTags of tag to look for if empty then every tag
 	 * @param int $offset
@@ -76,10 +76,10 @@ class Bookmarks {
 		$qb = $this->db->getQueryBuilder();
 		$qb
 			->select('t.tag')
-			->selectAlias($qb->createFunction('COUNT(' . $qb->getColumnName('t.bookmark_id') . ')'), 'nbr')
-			->from('bookmarks_tags', 't')
-			->innerJoin('t','bookmarks','b',$qb->expr()->andX(
-				$qb->expr()->eq('b.id', 't.bookmark_id'),
+			->selectAlias($qb->createFunction('COUNT(' . $qb->getColumnName('t.medionlibrary_id') . ')'), 'nbr')
+			->from('medionlibrarys_tags', 't')
+			->innerJoin('t','medionlibrarys','b',$qb->expr()->andX(
+				$qb->expr()->eq('b.id', 't.medionlibrary_id'),
 				$qb->expr()->eq('b.user_id', $qb->createNamedParameter($userId))));
 		if (!empty($filterTags)) {
 			$qb->where($qb->expr()->notIn('t.tag', $filterTags));
@@ -96,16 +96,16 @@ class Bookmarks {
 	}
 
 	/**
-	 * @brief Finds Bookmark with certain ID
-	 * @param int $id BookmarkId
+	 * @brief Finds Medionlibrary with certain ID
+	 * @param int $id MedionlibraryId
 	 * @param string $userId UserId
-	 * @return array Specific Bookmark
+	 * @return array Specific Medionlibrary
 	 */
-	public function findUniqueBookmark($id, $userId) {
+	public function findUniqueMedionlibrary($id, $userId) {
 		$qb = $this->db->getQueryBuilder();
 		$qb
 			->select('*')
-			->from('bookmarks')
+			->from('medionlibrarys')
 			->where($qb->expr()->eq('user_id', $qb->createNamedParameter($userId)))
 			->andWhere($qb->expr()->eq('id', $qb->createNamedParameter($id)));
 		$result = $qb->execute()->fetch();
@@ -113,24 +113,24 @@ class Bookmarks {
 		$qb = $this->db->getQueryBuilder();
 		$qb
 			->select('tag')
-			->from('bookmarks_tags')
-			->where($qb->expr()->eq('bookmark_id', $qb->createNamedParameter($id)));
+			->from('medionlibrarys_tags')
+			->where($qb->expr()->eq('medionlibrary_id', $qb->createNamedParameter($id)));
 		$result['tags'] = $qb->execute()->fetchColumn();
 		return $result;
 	}
 
 	/**
-	 * @brief Check if an URL is bookmarked
-	 * @param string $url Url of a possible bookmark
+	 * @brief Check if an URL is medionlibraryed
+	 * @param string $url Url of a possible medionlibrary
 	 * @param string $userId UserId
-	 * @return bool|int the bookmark ID if existing, false otherwise
+	 * @return bool|int the medionlibrary ID if existing, false otherwise
 	 */
-	public function bookmarkExists($url, $userId) {
+	public function medionlibraryExists($url, $userId) {
 		$encodedUrl = htmlspecialchars_decode($url);
 		$qb = $this->db->getQueryBuilder();
 		$qb
 			->select('id')
-			->from('bookmarks')
+			->from('medionlibrarys')
 			->where($qb->expr()->eq('user_id', $qb->createNamedParameter($userId)))
 			->andWhere($qb->expr()->eq('url', $qb->createNamedParameter($encodedUrl)));
 		$result = $qb->execute()->fetch();
@@ -142,19 +142,19 @@ class Bookmarks {
 	}
 
 	/**
-	 * @brief Finds all bookmarks, matching the filter
+	 * @brief Finds all medionlibrarys, matching the filter
 	 * @param string $userid UserId
 	 * @param int $offset offset
 	 * @param string $sqlSortColumn result with this column
 	 * @param string|array $filters filters can be: empty -> no filter, a string -> filter this, a string array -> filter for all strings
 	 * @param bool $filterTagOnly true, filter affects only tags, else filter affects url, title and tags
 	 * @param int $limit limit of items to return (default 10) if -1 or false then all items are returned
-	 * @param bool $public check if only public bookmarks should be returned
+	 * @param bool $public check if only public medionlibrarys should be returned
 	 * @param array $requestedAttributes select all the attributes that should be returned. default is * + tags
 	 * @param string $tagFilterConjunction select wether the filterTagOnly should filter with an AND or an OR  conjunction
-	 * @return array Collection of specified bookmarks
+	 * @return array Collection of specified medionlibrarys
 	 */
-	public function findBookmarks(
+	public function findMedionlibrarys(
 		$userid,
 		$offset,
 		$sqlSortColumn,
@@ -201,8 +201,8 @@ class Bookmarks {
 		}
 
 		$qb
-			->from('bookmarks', 'b')
-			->leftJoin('b', 'bookmarks_tags', 't', $qb->expr()->eq('t.bookmark_id', 'b.id'))
+			->from('medionlibrarys', 'b')
+			->leftJoin('b', 'medionlibrarys_tags', 't', $qb->expr()->eq('t.medionlibrary_id', 'b.id'))
 			->where($qb->expr()->eq('user_id', $qb->createNamedParameter($userid)))
 			->groupBy(array_merge($selectedAttributes, [$sqlSortColumn]));
 
@@ -211,7 +211,7 @@ class Bookmarks {
 		}
 		
 		if (count($filters) > 0) {
-			$this->findBookmarksBuildFilter($qb, $filters, $filterTagOnly, $tagFilterConjunction);
+			$this->findMedionlibrarysBuildFilter($qb, $filters, $filterTagOnly, $tagFilterConjunction);
 		}
 
 		$qb->orderBy($sqlSortColumn, 'DESC');
@@ -223,16 +223,16 @@ class Bookmarks {
 		}
 
 		$results = $qb->execute()->fetchAll();
-		$bookmarks = array();
+		$medionlibrarys = array();
 		foreach ($results as $result) {
 			if ($returnTags) {
 				$result['tags'] = explode(',', $result['tags']);
 			} else {
 				unset($result['tags']);
 			}
-			$bookmarks[] = $result;
+			$medionlibrarys[] = $result;
 		}
-		return $bookmarks;
+		return $medionlibrarys;
 	}
 
 	/**
@@ -241,7 +241,7 @@ class Bookmarks {
 	 * @param bool $filterTagOnly
 	 * @param string $tagFilterConjunction
 	 */
-	private function findBookmarksBuildFilter(&$qb, $filters, $filterTagOnly, $tagFilterConjunction) {
+	private function findMedionlibrarysBuildFilter(&$qb, $filters, $filterTagOnly, $tagFilterConjunction) {
 		$connectWord = 'AND';
 		if ($tagFilterConjunction == 'or') {
 			$connectWord = 'OR';
@@ -253,7 +253,7 @@ class Bookmarks {
 		$otherColumns = ['b.url', 'b.title', 'b.description'];
     $i = 0;
 		foreach ($filters as $filter) {
-      $qb->leftJoin('b', 'bookmarks_tags', 't' . $i, $qb->expr()->eq('t' . $i . '.bookmark_id', 'b.id'));
+      $qb->leftJoin('b', 'medionlibrarys_tags', 't' . $i, $qb->expr()->eq('t' . $i . '.medionlibrary_id', 'b.id'));
 			$filterExpressions[] = $qb->expr()->eq('t'.$i.'.tag', $qb->createNamedParameter($filter));
 			if (!$filterTagOnly) {
 				foreach ($otherColumns as $col) {
@@ -272,16 +272,16 @@ class Bookmarks {
 	}
 
 	/**
-	 * @brief Delete bookmark with specific id
+	 * @brief Delete medionlibrary with specific id
 	 * @param string $userId UserId
-	 * @param int $id Bookmark ID to delete
+	 * @param int $id Medionlibrary ID to delete
 	 * @return boolean Success of operation
 	 */
 	public function deleteUrl($userId, $id) {
 		$qb = $this->db->getQueryBuilder();
 		$qb
 			->select('id')
-			->from('bookmarks')
+			->from('medionlibrarys')
 			->where($qb->expr()->eq('user_id', $qb->createNamedParameter($userId)))
 			->andWhere($qb->expr()->eq('id', $qb->createNamedParameter($id)));
 
@@ -292,14 +292,14 @@ class Bookmarks {
 
 		$qb = $this->db->getQueryBuilder();
 		$qb
-			->delete('bookmarks')
+			->delete('medionlibrarys')
 			->where($qb->expr()->eq('id', $qb->createNamedParameter($id)));
 		$qb->execute();
 
 		$qb = $this->db->getQueryBuilder();
 		$qb
-			->delete('bookmarks_tags')
-			->where($qb->expr()->eq('bookmark_id', $qb->createNamedParameter($id)));
+			->delete('medionlibrarys_tags')
+			->where($qb->expr()->eq('medionlibrary_id', $qb->createNamedParameter($id)));
 		$qb->execute();
 		return true;
 	}
@@ -315,10 +315,10 @@ class Bookmarks {
 		// Remove about-to-be duplicated tags
 		$qb = $this->db->getQueryBuilder();
 		$qb
-			->select('tgs.bookmark_id')
-			->from('bookmarks_tags', 'tgs')
-			->innerJoin('tgs', 'bookmarks', 'bm', $qb->expr()->eq('tgs.bookmark_id', 'bm.id'))
-			->innerJoin('tgs', 'bookmarks_tags', 't', $qb->expr()->eq('tgs.bookmark_id', 't.bookmark_id'))
+			->select('tgs.medionlibrary_id')
+			->from('medionlibrarys_tags', 'tgs')
+			->innerJoin('tgs', 'medionlibrarys', 'bm', $qb->expr()->eq('tgs.medionlibrary_id', 'bm.id'))
+			->innerJoin('tgs', 'medionlibrarys_tags', 't', $qb->expr()->eq('tgs.medionlibrary_id', 't.medionlibrary_id'))
 			->where($qb->expr()->eq('tgs.tag', $qb->createNamedParameter($new)))
 			->andWhere($qb->expr()->eq('bm.user_id', $qb->createNamedParameter($userId)))
 			->andWhere($qb->expr()->eq('t.tag', $qb->createNamedParameter($old)));
@@ -326,8 +326,8 @@ class Bookmarks {
 		if ($duplicates !== false) {
 			$qb = $this->db->getQueryBuilder();
 			$qb
-				->delete('bookmarks_tags', 't')
-				->where($qb->expr()->in('t.bookmark_id', $qb->createNamedParameter($duplicates)))
+				->delete('medionlibrarys_tags', 't')
+				->where($qb->expr()->in('t.medionlibrary_id', $qb->createNamedParameter($duplicates)))
 				->andWhere($qb->expr()->eq('t.tag', $qb->createNamedParameter($old)));
 			$qb->execute();
 		}
@@ -335,19 +335,19 @@ class Bookmarks {
 		// Update tags to the new label
 		$qb = $this->db->getQueryBuilder();
 		$qb
-			->select('tgs.bookmark_id')
-			->from('bookmarks_tags', 'tgs')
-			->innerJoin('tgs', 'bookmarks', 'bm', $qb->expr()->eq('tgs.bookmark_id', 'bm.id'))
+			->select('tgs.medionlibrary_id')
+			->from('medionlibrarys_tags', 'tgs')
+			->innerJoin('tgs', 'medionlibrarys', 'bm', $qb->expr()->eq('tgs.medionlibrary_id', 'bm.id'))
 			->where($qb->expr()->eq('tgs.tag', $qb->createNamedParameter($old)))
 			->andWhere($qb->expr()->eq('bm.user_id', $qb->createNamedParameter($userId)));
-		$bookmarks = $qb->execute()->fetchColumn();
-		if ($bookmarks !== false) {
+		$medionlibrarys = $qb->execute()->fetchColumn();
+		if ($medionlibrarys !== false) {
 			$qb = $this->db->getQueryBuilder();
 			$qb
-				->update('bookmarks_tags')
+				->update('medionlibrarys_tags')
 				->set('tag', $qb->createNamedParameter($new))
 				->where($qb->expr()->eq('tag', $qb->createNamedParameter($old)))
-				->andWhere($qb->expr()->in('bookmark_id', $qb->createNamedParameter($bookmarks)));
+				->andWhere($qb->expr()->in('medionlibrary_id', $qb->createNamedParameter($medionlibrarys)));
 			$qb->execute();
 		}
 		return true;
@@ -362,36 +362,36 @@ class Bookmarks {
 	public function deleteTag($userid, $old) {
 		$qb = $this->db->getQueryBuilder();
 		$qb
-			->select('tgs.bookmark_id')
-			->from('bookmarks_tags', 'tgs')
-			->innerJoin('tgs', 'bookmarks', 'bm', $qb->expr()->eq('tgs.bookmark_id', 'bm.id'))
+			->select('tgs.medionlibrary_id')
+			->from('medionlibrarys_tags', 'tgs')
+			->innerJoin('tgs', 'medionlibrarys', 'bm', $qb->expr()->eq('tgs.medionlibrary_id', 'bm.id'))
 			->where($qb->expr()->eq('tgs.tag', $qb->createNamedParameter($old)))
 			->andWhere($qb->expr()->eq('bm.user_id', $qb->createNamedParameter($userid)));
-		$bookmarks = $qb->execute()->fetchColumn();
-		if ($bookmarks !== false) {
+		$medionlibrarys = $qb->execute()->fetchColumn();
+		if ($medionlibrarys !== false) {
 			$qb = $this->db->getQueryBuilder();
 			$qb
-				->delete('bookmarks_tags', 'tgs')
+				->delete('medionlibrarys_tags', 'tgs')
 				->where($qb->expr()->eq('tgs.tag', $qb->createNamedParameter($old)))
-				->andWhere($qb->expr()->in('bm.user_id', $qb->createNamedParameter($bookmarks)));
+				->andWhere($qb->expr()->in('bm.user_id', $qb->createNamedParameter($medionlibrarys)));
 			return $qb->execute();
 		}
 		return true;
 	}
 
 	/**
-	 * Edit a bookmark
+	 * Edit a medionlibrary
 	 *
 	 * @param string $userid UserId
-	 * @param int $id The id of the bookmark to edit
+	 * @param int $id The id of the medionlibrary to edit
 	 * @param string $url The url to set
-	 * @param string $title Name of the bookmark
-	 * @param array $tags Simple array of tags to qualify the bookmark (different tags are taken from values)
-	 * @param string $description A longer description about the bookmark
-	 * @param boolean $isPublic True if the bookmark is publishable to not registered users
+	 * @param string $title Name of the medionlibrary
+	 * @param array $tags Simple array of tags to qualify the medionlibrary (different tags are taken from values)
+	 * @param string $description A longer description about the medionlibrary
+	 * @param boolean $isPublic True if the medionlibrary is publishable to not registered users
 	 * @return null
 	 */
-	public function editBookmark($userid, $id, $url, $title, $tags = [], $description = '', $isPublic = false) {
+	public function editMedionlibrary($userid, $id, $url, $title, $tags = [], $description = '', $isPublic = false) {
 
 		$isPublic = $isPublic ? 1 : 0;
 
@@ -399,7 +399,7 @@ class Bookmarks {
 
 		$qb = $this->db->getQueryBuilder();
 		$qb
-			->update('bookmarks')
+			->update('medionlibrarys')
 			->set('url', $qb->createNamedParameter(htmlspecialchars_decode($url)))
 			->set('title', $qb->createNamedParameter(htmlspecialchars_decode($title)))
 			->set('public', $qb->createNamedParameter($isPublic))
@@ -409,8 +409,8 @@ class Bookmarks {
 			->andWhere($qb->expr()->eq('user_id', $qb->createNamedParameter($userid)));
 
 		$result = $qb->execute();
-		// Abort the operation if bookmark couldn't be set
-		// (probably because the user is not allowed to edit this bookmark)
+		// Abort the operation if medionlibrary couldn't be set
+		// (probably because the user is not allowed to edit this medionlibrary)
 		if ($result == 0) {
 			exit();
 		}
@@ -419,8 +419,8 @@ class Bookmarks {
 
 		$qb = $this->db->getQueryBuilder();
 		$qb
-			->delete('bookmarks_tags')
-			->where($qb->expr()->eq('bookmark_id', $qb->createNamedParameter($id)));
+			->delete('medionlibrarys_tags')
+			->where($qb->expr()->eq('medionlibrary_id', $qb->createNamedParameter($id)));
 		$qb->execute();
 
 		// Add New Tags
@@ -430,21 +430,21 @@ class Bookmarks {
 	}
 
 	/**
-	 * Add a bookmark
+	 * Add a medionlibrary
 	 *
 	 * @param string $userid UserId
 	 * @param string $url
-	 * @param string $title Name of the bookmark
-	 * @param array $tags Simple array of tags to qualify the bookmark (different tags are taken from values)
-	 * @param string $description A longer description about the bookmark
-	 * @param boolean $isPublic True if the bookmark is publishable to not registered users
-	 * @return int The id of the bookmark created
+	 * @param string $title Name of the medionlibrary
+	 * @param array $tags Simple array of tags to qualify the medionlibrary (different tags are taken from values)
+	 * @param string $description A longer description about the medionlibrary
+	 * @param boolean $isPublic True if the medionlibrary is publishable to not registered users
+	 * @return int The id of the medionlibrary created
 	 */
-	public function addBookmark($userid, $url, $title, $tags = array(), $description = '', $isPublic = false) {
+	public function addMedionlibrary($userid, $url, $title, $tags = array(), $description = '', $isPublic = false) {
 		$public = $isPublic ? 1 : 0;
 		$urlWithoutPrefix = trim(substr($url, strpos($url, "://") + 3)); // Removes everything from the url before the "://" pattern (included)
 		if($urlWithoutPrefix === '') {
-			throw new \InvalidArgumentException('Bookmark URL is missing');
+			throw new \InvalidArgumentException('Medionlibrary URL is missing');
 		}
 		$decodedUrlNoPrefix = htmlspecialchars_decode($urlWithoutPrefix);
 		$decodedUrl = htmlspecialchars_decode($url);
@@ -457,7 +457,7 @@ class Bookmarks {
 		$qb = $this->db->getQueryBuilder();
 		$qb
 			->select('*')
-			->from('bookmarks')
+			->from('medionlibrarys')
 			->where($qb->expr()->like('url', $qb->createParameter('url'))) // Find url in the db independantly from its protocol
 			->andWhere($qb->expr()->eq('user_id', $qb->createParameter('userID')));
 		$qb->setParameters([
@@ -469,7 +469,7 @@ class Bookmarks {
 		if ($row) {
 			$qb = $this->db->getQueryBuilder();
 			$qb
-				->update('bookmarks')
+				->update('medionlibrarys')
 				->set('lastmodified', $qb->createFunction('UNIX_TIMESTAMP()'))
 				->set('url', $qb->createParameter('url'));
 			if (trim($title) != '') { // Do we replace the old title
@@ -495,7 +495,7 @@ class Bookmarks {
 		} else {
 			$qb = $this->db->getQueryBuilder();
 			$qb
-				->insert('bookmarks')
+				->insert('medionlibrarys')
 				->values(array(
 					'url' => $qb->createParameter('url'),
 					'title' => $qb->createParameter('title'),
@@ -527,11 +527,11 @@ class Bookmarks {
 	}
 
 	/**
-	 * @brief Add a set of tags for a bookmark
-	 * @param int $bookmarkID The bookmark reference
-	 * @param array $tags Set of tags to add to the bookmark
+	 * @brief Add a set of tags for a medionlibrary
+	 * @param int $medionlibraryID The medionlibrary reference
+	 * @param array $tags Set of tags to add to the medionlibrary
 	 * */
-	private function addTags($bookmarkID, $tags) {
+	private function addTags($medionlibraryID, $tags) {
 		foreach ($tags as $tag) {
 			$tag = trim($tag);
 			if (empty($tag)) {
@@ -539,31 +539,31 @@ class Bookmarks {
 				continue;
 			}
 
-			// check if tag for this bookmark exists
+			// check if tag for this medionlibrary exists
 
 			$qb = $this->db->getQueryBuilder();
 			$qb
 			->select('*')
-			->from('bookmarks_tags')
-				->where($qb->expr()->eq('bookmark_id', $qb->createNamedParameter($bookmarkID)))
+			->from('medionlibrarys_tags')
+				->where($qb->expr()->eq('medionlibrary_id', $qb->createNamedParameter($medionlibraryID)))
 				->andWhere($qb->expr()->eq('tag', $qb->createNamedParameter($tag)));
 
 			if ($qb->execute()->fetch()) continue;
 
 			$qb = $this->db->getQueryBuilder();
 			$qb
-				->insert('bookmarks_tags')
+				->insert('medionlibrarys_tags')
 				->values(array(
 					'tag' => $qb->createNamedParameter($tag),
-					'bookmark_id' => $qb->createNamedParameter($bookmarkID)
+					'medionlibrary_id' => $qb->createNamedParameter($medionlibraryID)
 				));
 			$qb->execute();
 		}
 	}
 
 	/**
-	 * @brief Import Bookmarks from html formatted file
-	 * @param string $user User imported Bookmarks should belong to
+	 * @brief Import Medionlibrarys from html formatted file
+	 * @param string $user User imported Medionlibrarys should belong to
 	 * @param string $file Content to import
 	 * @return null
 	 * */
@@ -590,10 +590,10 @@ class Bookmarks {
 			if ($link->hasAttribute("description"))
 				$descriptionStr = $link->getAttribute("description");
 			try {
-				$this->addBookmark($user, $ref, $title, $tags, $descriptionStr);
+				$this->addMedionlibrary($user, $ref, $title, $tags, $descriptionStr);
 			} catch (\InvalidArgumentException $e) {
-				$this->logger->logException($e, ['app' => 'bookmarks']);
-				$errors[] =  $this->l->t('Failed to import one bookmark, because: ') . $e->getMessage();
+				$this->logger->logException($e, ['app' => 'medionlibrarys']);
+				$errors[] =  $this->l->t('Failed to import one medionlibrary, because: ') . $e->getMessage();
 			}
 		}
 
